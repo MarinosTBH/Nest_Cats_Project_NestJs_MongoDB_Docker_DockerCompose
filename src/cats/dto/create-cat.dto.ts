@@ -1,14 +1,21 @@
-import { IsString, IsInt, IsNotEmpty} from "class-validator";
-
+import { IsString, IsNumber, IsNotEmpty, MinLength, MaxLength } from "class-validator";
 
 export class CreateCatDto {
+    @IsNotEmpty()
     @IsString()
-    // @IsNotEmpty()
+    @MinLength(5)
     name: string;
 
-    // @IsInt()
-    age: number;
+    @IsNotEmpty()
+    @IsString()
+    @MinLength(5)
+    @MaxLength(300)
+    description: string;
 
-    // @IsString()
-    breed: string;
+    @IsNumber()
+    @IsNotEmpty()
+    price: number;
+    
+    // created: Date;
+    // updated: Date;
 }

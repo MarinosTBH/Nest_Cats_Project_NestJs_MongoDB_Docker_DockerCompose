@@ -6,13 +6,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: 
-  // MongooseModule.forRoot(),  
-  [CatsModule]
-})
+    [CatsModule]
+}) 
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(logger) // can take a simple or multiple middlewares
       .forRoutes({ path: 'cats', method: RequestMethod.GET}); //reference the desired request method type       
   }
-}
+} 

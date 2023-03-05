@@ -1,62 +1,39 @@
 //or Provider : responsible for data storage and retrieval, and is designed to be used by the CatsController
+//Contains the business logic of the app 
 import { Injectable } from "@nestjs/common";
-import { Cat } from "./interfaces/cat.interface";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { CreateCatDto } from "./dto/create-cat.dto";
+import { UpdateCatDto } from "./dto/update-cat.dto";
+import { Cat, CatDocument } from "./schema/cat.schema";
 
 
 @Injectable()
 export class CatsService {
-    private readonly cats: Cat[] = [{ // initial cats
-        name: "cat1",
-        age: 1,
-        breed: "catto"
-    },
-    {
-        name: "cat2",
-        age: 2,
-        breed: "catto"
-    },
-    {
-        name: "cat3",
-        age: 3,
-        breed: "catto"
-    }
-    ]
-    //Post a cat
-    create(cat:Cat) {
-        this.cats.push(cat)
+    constructor(
+        @InjectModel(Cat.name) private readonly catModel: Model<CatDocument>
+    ) {}
+
+    // Post a cat
+    async create(createCatDto: CreateCatDto): Promise<CatDocument> {
+        const cat = new this.catModel(createCatDto)
+        return cat.save()
     }
     // Get all cats
-    findAll(): Cat[] {
-        return this.cats
-        console.log(this.cats[0]);
+    async findAll(): Promise<CatDocument[]> {
+        return this.catModel.find()
     }
-    //remove a cat by its name
-    remove(id: string) {
-        console.log('deletion began');
-        function removeCat(value: Cat, index: number, arr: []) {
-            //if value matchs param
-            if (value.name === id) {
-                arr.splice(index, 1)
-                return true
-            }
-            return false
-        }
-        const x = this.cats.filter(removeCat)
-        console.log("Deleted", x);
-        return x
+    // Find one 
+    findOne(id: String) {
+        return this.catModel.findById(id)
     }
-    //Edit a cat breed
-    edit(id:string) {
-        function editCat(value: Cat, index: number, arr: []) {
-            if (value.name === id) {
-                arr.splice(index, 1)
-                return true 
-            }
-            return false
-        }
-        const x = this.cats.map(editCat)
-        console.log(x);
-        // this.cats.push(x)
-        return "edited"
+    // Edit a cat breed
+    async update(id: string, updateCatDto: UpdateCatDto): Promise<CatDocument> {
+        return this.catModel.findByIdAndUpdate(id, updateCatDto)
     }
-}
+    // Remove a cat by its name
+    async remove(id: string){
+        return this.catModel.findByIdAndRemove(id)
+    }
+    }
+
