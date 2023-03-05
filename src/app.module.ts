@@ -4,6 +4,7 @@ import { GlobalModule } from './modules/global.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
+<<<<<<< HEAD
   imports:
     [
       ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
@@ -12,3 +13,15 @@ import { ConfigModule } from '@nestjs/config';
     ],
 })
 export class AppModule { }
+=======
+  imports: 
+    [CatsModule]
+}) 
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(logger) // can take a simple or multiple middlewares
+      .forRoutes({ path: 'cats', method: RequestMethod.GET}); //reference the desired request method type       
+  }
+} 
+>>>>>>> ee89180 (First commit)
