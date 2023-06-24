@@ -1,17 +1,14 @@
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
-import { logger } from './common/middleware/logger.middleware';
-import { CatsModule } from './cats/cats.module';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-
+import { GlobalModule } from './modules/global.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: 
-    [CatsModule]
-}) 
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(logger) // can take a simple or multiple middlewares
-      .forRoutes({ path: 'cats', method: RequestMethod.GET}); //reference the desired request method type       
-  }
-} 
+  imports:
+    [
+      ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+      MongooseModule.forRoot(process.env.MONGODB_URL),
+      GlobalModule,
+    ],
+})
+export class AppModule { }
